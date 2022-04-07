@@ -44,16 +44,6 @@ execMain(function() {
 		try {
 			prop = LZString.compressToEncodedURIComponent(localStorage['properties']);
 		} catch (e) {}
-		$.post('bug.php', {
-			'version': CSTIMER_VERSION,
-			'fp': fingerprint,
-			'msg': msg,
-			'url': url,
-			'line': line,
-			'col': col,
-			'stack': error.stack,
-			'prop': prop
-		});
 		console.log(CSTIMER_VERSION, fingerprint, msg, url, line, col, error);
 	};
 
