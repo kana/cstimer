@@ -32,9 +32,9 @@ var exportFunc = execMain(function() {
 				inFile.click();
 			})),
 			$('<td>').append(outFile)),
-		$('<tr>').append(
-			$('<td>').append(inServ),
-			$('<td>').append(outServ)),
+		// $('<tr>').append(
+		// 	$('<td>').append(inServ),
+		// 	$('<td>').append(outServ)),
 		$('<tr>').append(
 			$('<td colspan=2>').append($('<a class="click"/>').html(EXPORT_FROMOTHER).click(function() {
 				inOtherFile.click();
@@ -560,16 +560,16 @@ var exportFunc = execMain(function() {
 
 		kernel.addButton('export', BUTTON_EXPORT, showExportDiv, 2);
 		exportDiv.append('<br>',
-			$('<div class="expOauth">').append(
-				$('<table id="wcaLogin">').append(wcaDataTr),
-				$('<table class="expUpDown">').append($('<tr>').append(
-					$('<td>').append(inServWCA),
-					$('<td>').append(outServWCA)))),
-			$('<div class="expOauth">').append(
-				$('<table id="gglLogin">').append(gglDataTr),
-				$('<table class="expUpDown">').append($('<tr>').append(
-					$('<td>').append(inServGGL),
-					$('<td>').append(outServGGL)))),
+			// $('<div class="expOauth">').append(
+			// 	$('<table id="wcaLogin">').append(wcaDataTr),
+			// 	$('<table class="expUpDown">').append($('<tr>').append(
+			// 		$('<td>').append(inServWCA),
+			// 		$('<td>').append(outServWCA)))),
+			// $('<div class="expOauth">').append(
+			// 	$('<table id="gglLogin">').append(gglDataTr),
+			// 	$('<table class="expUpDown">').append($('<tr>').append(
+			// 		$('<td>').append(inServGGL),
+			// 		$('<td>').append(outServGGL)))),
 			exportTable);
 		if (window.FileReader && window.Blob) {
 			var reader = new FileReader();
