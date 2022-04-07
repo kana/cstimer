@@ -587,8 +587,8 @@ var kernel = execMain(function() {
 		];
 
 		var styles = [
-			"#000#efc#fdd#fbb#00f#ff0#000",
-			"#000#ffe#ff9#ff0#00f#fa0#000",
+			"#ddd#023#023#134#09f#ddd#023",
+			"#222#eee#ccc#999#07c#eee#666",
 			"#fff#600#668#408#ccf#0ff#000",
 			"#fff#000#555#888#aaa#000#aaa",
 			"#000#fff#ccc#ddd#555#fff#888",
