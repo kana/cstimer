@@ -649,7 +649,7 @@ div.helptable ul {
 }
 
 #scrambleTxt {
-	width: 100%;
+	margin: 0 1ex;
 	white-space: pre-wrap;
 	overflow-x: hidden;
 	overflow-y: auto;
