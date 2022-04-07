@@ -825,9 +825,6 @@ var kernel = execMain(function() {
 			$(window).resize(fixOrient);
 			$(window).bind('hashchange', hashChange);
 			hashChange();
-			if (location.protocol != 'https:') {
-				document.title = '[UNSAFE] ' + document.title;
-			}
 		});
 
 		return {

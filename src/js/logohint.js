@@ -76,9 +76,6 @@ var logohint = execMain(function() {
 			render();
 		});
 		logo.click(function() {
-			if (location.protocol != 'https:' && confirm('Your access to csTimer is unsafe. Press OK for safe access.')) {
-				location.protocol = 'https:';
-			}
 			about.show();
 			kernel.showDialog([about, 0, undefined, 0], 'logo', title);
 		});
