@@ -189,21 +189,6 @@ execMain(function() {
 		}
 		return ret;
 	}
-
-	if ('serviceWorker' in navigator) {
-		$(function() {
-			navigator.serviceWorker.register('sw.js');
-		});
-	} else if (window.applicationCache) {
-		$(function() {
-			applicationCache.addEventListener('updateready', function(e) {
-				if (applicationCache.status == applicationCache.UPDATEREADY) {
-					applicationCache.swapCache();
-					location.reload();
-				}
-			}, false);
-		});
-	}
 });
 
 /** @define {boolean} */
