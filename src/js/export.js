@@ -17,8 +17,8 @@ var exportFunc = execMain(function() {
 	var inServGGL = $('<a class="click"/>');
 	var outServGGL = $('<a class="click"/>');
 
-	var inFile = $('<input type="file" id="file" accept="text/*"/>');
-	var inOtherFile = $('<input type="file" id="file" accept="text/*"/>');
+	var inFile = $('<input type="file" id="file"/>');
+	var inOtherFile = $('<input type="file" id="file"/>');
 	var outFile = $('<a class="click"/>').html(EXPORT_TOFILE);
 
 	var inServ = $('<a class="click"/>').html(EXPORT_FROMSERV + ' (csTimer)').click(downloadData);
