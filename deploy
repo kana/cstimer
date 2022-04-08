@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -euxo pipefail
+
+git diff --quiet
+
+source_branch="$(git rev-parse --symbolic-full-name HEAD)"
+
+git checkout gh-pages
+git read-tree -u --reset "${source_branch}:src"
+git commit -m "Update based on $(git log -n1 --pretty='%h' "$source_branch")"
+git push origin gh-pages
+git checkout -
