@@ -630,7 +630,8 @@ div.helptable ul {
 }
 
 #scrambleTxt {
-	margin: 0 1ex;
+	margin: 0;
+	padding: 0 1ex;
 	white-space: pre-wrap;
 	overflow-x: hidden;
 	overflow-y: auto;
