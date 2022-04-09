@@ -1345,9 +1345,10 @@ var stats = execMain(function(kpretty, round, kpround) {
 			loadSession(sessionIdx);
 			kernel.blur();
 
-			if (kernel.getProp('imrename')) {
-				renameSession(sessionIdx, true);
-			}
+			renameSessionAuto(sessionIdx);
+			// if (kernel.getProp('imrename')) {
+			// 	renameSession(sessionIdx, true);
+			// }
 		}
 
 		function doSessionDeletion(ssidx) {
@@ -1401,6 +1402,37 @@ var stats = execMain(function(kpretty, round, kpround) {
 				sessionData[ssidx]['name'] = sName;
 				kernel.setProp('sessionData', JSON.stringify(sessionData));
 			}
+		}
+
+		function renameSessionAuto(ssidx) {
+			if (ssidx === undefined) {
+				ssidx = sessionIdx;
+			}
+			var sName = generateSessionName(sessionData[ssidx]['name']);
+			if (sName != null) {
+				sName = $('<div/>').text(sName).html();
+				sessionData[ssidx]['name'] = sName;
+				kernel.setProp('sessionData', JSON.stringify(sessionData));
+			}
+		}
+
+		function generateSessionName(baseName) {
+			var tokens = baseName.split(' ');
+			if (tokens.length < 2) {
+				return baseName;
+			}
+
+			var match = /^(\d+)\.(\d+)$/.exec(tokens[0]);
+			if (!match) {
+				return baseName;
+			}
+
+			var now = new Date();
+			return [
+				(now.getMonth() + 1)
+				+ '.'
+				+ now.getDate()
+			].concat(tokens.slice(1)).join(' ');
 		}
 
 		function sessionLoaded(sessionIdx, timesNew) {
