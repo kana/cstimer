@@ -8,9 +8,6 @@ var exportFunc = execMain(function() {
 	var inOtherFile = $('<input type="file" id="file"/>');
 	var outFile = $('<a class="click"/>').html(EXPORT_TOFILE);
 
-	var inServ = $('<a class="click"/>').html(EXPORT_FROMSERV + ' (csTimer)').click(downloadData);
-	var outServ = $('<a class="click"/>').html(EXPORT_TOSERV + ' (csTimer)').click(uploadDataClk);
-
 	var expString;
 
 	exportTable.append(
@@ -19,9 +16,6 @@ var exportFunc = execMain(function() {
 				inFile.click();
 			})),
 			$('<td>').append(outFile)),
-		// $('<tr>').append(
-		// 	$('<td>').append(inServ),
-		// 	$('<td>').append(outServ)),
 		$('<tr>').append(
 			$('<td colspan=2>').append($('<a class="click"/>').html(EXPORT_FROMOTHER).click(function() {
 				inOtherFile.click();
@@ -118,86 +112,6 @@ var exportFunc = execMain(function() {
 			return;
 		}
 		return id;
-	}
-
-	function uploadDataClk(e) {
-		var id = getId(e);
-		if (!id) {
-			return;
-		}
-		var target = $(e.target);
-		var rawText = target.html();
-		target.html('...');
-		uploadData(id).then(function() {
-			alert(EXPORT_UPLOADED);
-		}, function() {
-			alert(EXPORT_ERROR);
-		}).then(function() {
-			target.html(rawText);
-		});
-	}
-
-	function downloadData(e) {
-		var id = getId(e);
-		if (!id) {
-			return;
-		}
-		var target = $(e.target);
-		var rawText = target.html();
-		target.html('Check File List...');
-
-		var onerr = function() {
-			alert(EXPORT_ERROR);
-		};
-
-		var revert = function() {
-			target.html(rawText);
-		};
-
-		var cntCallback = function(val) {
-			var cnt = ~~val['data'];
-			if (cnt == 0) {
-				alert('No Data Found');
-				return revert();
-			}
-			var idx = 1;
-			if (kernel.getProp('expp')) {
-				idx = ~~prompt('You have %d file(s), load (1 - lastest one, 2 - lastest but one, etc) ?'.replace('%d', cnt), '1');
-				if (idx <= 0 || idx > cnt) {
-					return revert();
-				}
-			}
-			target.html('Import Data...');
-			$.post('https://cstimer.net/userdata.php', {
-				'id': id,
-				'offset': idx - 1
-			}, dataCallback, 'json').error(onerr).always(revert);
-		};
-
-		var dataCallback = function(val) {
-			var retcode = val['retcode'];
-			if (retcode == 0) {
-				try {
-					loadData(JSON.parse(LZString.decompressFromEncodedURIComponent(val['data'])));
-				} catch (err) {
-					alert(EXPORT_ERROR);
-				}
-			} else if (retcode == 404) {
-				alert(EXPORT_NODATA);
-			} else {
-				alert(EXPORT_ERROR);
-			}
-			revert();
-		};
-
-		if (kernel.getProp('expp')) {
-			$.post('https://cstimer.net/userdata.php', {
-				'id': id,
-				'cnt': 1
-			}, cntCallback, 'json').error(onerr).always(revert);
-		} else {
-			cntCallback({'data':1});
-		}
 	}
 
 	function showExportDiv() {
