@@ -4,8 +4,8 @@ var exportFunc = execMain(function() {
 	var exportDiv = $('<div />');
 	var exportTable = $('<table class="expOauth expUpDown">');
 
-	var inFile = $('<input type="file" id="file"/>');
-	var inOtherFile = $('<input type="file" id="file"/>');
+	var inFile = $('<input type="file" id="file" accept="text/plain"/>');
+	var inOtherFile = $('<input type="file" id="file" accept="text/plain"/>');
 	var outFile = $('<a class="click"/>').html(EXPORT_TOFILE);
 
 	var expString;
