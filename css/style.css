@@ -182,16 +182,14 @@ textarea {
 	text-align: center;
 	border-radius: 5px;
 	border-radius: 0.35rem;
-	width: 190px;
 	width: 13.5rem;
-	height: 190px;
-	height: 13.5rem;
+	height: 4.5rem;
 }
 
 #leftbar > div {
 	position: absolute;
 	width: 33.3333%;
-	height: 33.3333%;
+	height: 100%;
 	cursor: pointer;
 	border-radius: 5px;
 	border-radius: 0.35rem;
@@ -206,24 +204,8 @@ textarea {
 	top: 0;
 	left: 33.3333%;
 }
-#leftbar > div.c3{
-	top: 0;
-	right: 0;
-}
-#leftbar #logo {
-	top: 33.3333%;
-	left: 0;
-}
-#leftbar > div.c4{
-	bottom: 0;
-	left: 0;
-}
-#leftbar > div.c5{
-	bottom: 0;
-	left: 33.3333%;
-}
 #leftbar > div.c6{
-	bottom: 0;
+	top: 0;
 	right: 0;
 }
 
@@ -532,8 +514,7 @@ html:not(.m) .mywindow:hover, html:not(.m) #leftbar:hover {
 
 #stats {
 	left: 0;
-	top: 190px;
-	top: 13.5rem;
+	top: 4.5rem;
 	bottom: 0;
 	text-align: center;
 }
@@ -929,9 +910,6 @@ html.m .mhide, html:not(.m) .mshow {
 .m #leftbar > div.c3{
 	left: 22.2222%;
 }
-.m #leftbar #logo {
-	left: 33.3333%;
-}
 .m #leftbar > div.c4{
 	left: 66.6667%;
 }
@@ -940,11 +918,6 @@ html.m .mhide, html:not(.m) .mshow {
 }
 .m #leftbar > div.c6{
 	left: 88.8889%;
-}
-
-.m #leftbar #logo {
-	width: 33.3333%;
-	top: 0;
 }
 
 .m .mybutton {

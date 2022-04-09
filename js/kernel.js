@@ -393,7 +393,6 @@ var kernel = execMain(function() {
 		var isPopup = false;
 		var gray;
 		var leftbar;
-		var donateDiv = $('<div />');
 
 		function addButton(module, button, callback, index) {
 			leftbar = leftbar || $('#leftbar');
@@ -811,9 +810,7 @@ var kernel = execMain(function() {
 
 			gray = $('#gray');
 
-			$('.donate').appendTo(donateDiv);
 			addButton('donate', BUTTON_DONATE, function() {
-				showDialog([donateDiv, 0, undefined, 0], 'stats', BUTTON_DONATE.replace('<br>', ''));
 			}, 5);
 			leftbar.appendTo(wndCtn).mouseenter(function() {
 				toggleLeftBar(true);
