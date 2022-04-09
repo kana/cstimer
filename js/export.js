@@ -1,16 +1,10 @@
 "use strict";
 
 var exportFunc = execMain(function() {
-	var wcaLoginUrl = 'https://www.worldcubeassociation.org/oauth/authorize?client_id=63a89d6694b1ea2d7b7cbbe174939a4d2adf8dd26e69acacd1280af7e7727554&response_type=code&scope=public&redirect_uri=' + encodeURI(location.href.split('?')[0]);
 	var gglLoginUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=738060786798-octf9tngnn8ibd6kau587k34au263485.apps.googleusercontent.com&response_type=token&scope=https://www.googleapis.com/auth/drive.appdata&redirect_uri=' + encodeURI(location.href.split('?')[0]);
 
 	var exportDiv = $('<div />');
 	var exportTable = $('<table class="expOauth expUpDown">');
-
-	var wcaDataTd = $('<td></td>');
-	var wcaDataTr = $('<tr>').append('<td class="img"/>', wcaDataTd);
-	var inServWCA = $('<a class="click"/>').html(EXPORT_FROMSERV + ' (csTimer)').click(downloadData);
-	var outServWCA = $('<a class="click"/>').html(EXPORT_TOSERV + ' (csTimer)').click(uploadDataClk);
 
 	var gglDataTd = $('<td></td>');
 	var gglDataTr = $('<tr>').append('<td class="img"/>', gglDataTd);
@@ -86,12 +80,10 @@ var exportFunc = execMain(function() {
 		}).then(function() {
 			if ('properties' in data) {
 				var devData = localStorage['devData'] || '{}';
-				var wcaData = localStorage['wcaData'] || '{}';
 				var gglData = localStorage['gglData'] || '{}';
 				var locData = localStorage['locData'] || '{}';
 				localStorage.clear();
 				localStorage['devData'] = devData;
-				localStorage['wcaData'] = wcaData;
 				localStorage['gglData'] = gglData;
 				localStorage['locData'] = locData;
 				localStorage['properties'] = mathlib.obj2str(data['properties']);
@@ -124,37 +116,17 @@ var exportFunc = execMain(function() {
 
 	function getId(e) {
 		var id = null;
-		if (e.target === outServWCA[0] || e.target === inServWCA[0]) {
-			id = getDataId('wcaData', 'cstimer_token');
-		} else {
-			id = prompt(EXPORT_USERID, getDataId('locData', 'id'));
-			if (id == null) {
-				return;
-			}
-			localStorage['locData'] = JSON.stringify({ id: id, compid: getDataId('locData', 'compid') });
-			kernel.pushSignal('export', ['account', 'locData']);
+		id = prompt(EXPORT_USERID, getDataId('locData', 'id'));
+		if (id == null) {
+			return;
 		}
+		localStorage['locData'] = JSON.stringify({ id: id, compid: getDataId('locData', 'compid') });
+		kernel.pushSignal('export', ['account', 'locData']);
 		if (!isValidId(id)) {
 			alert(EXPORT_INVID);
 			return;
 		}
 		return id;
-	}
-
-	function uploadData(id) {
-		return new Promise(function(resolve, reject) {
-			var compExpString = LZString.compressToEncodedURIComponent(expString);
-			$.post('https://cstimer.net/userdata.php', {
-				'id': id,
-				'data': compExpString
-			}, function(val) {
-				if (val['retcode'] == 0) {
-					resolve(val);
-				} else {
-					reject(val);
-				}
-			}, 'json').error(reject);
-		});
 	}
 
 	function uploadDataClk(e) {
@@ -389,7 +361,6 @@ var exportFunc = execMain(function() {
 
 	function exportAccounts() {
 		var expOpt = {
-			'wcaData': localStorage['wcaData'],
 			'gglData': localStorage['gglData'],
 			'locData': localStorage['locData']
 		};
@@ -405,25 +376,6 @@ var exportFunc = execMain(function() {
 		}
 		location.reload();
 		return false;
-	}
-
-	function updateUserInfoFromWCA() {
-		var wcaData = JSON.parse(localStorage['wcaData'] || '{}');
-		wcaDataTr.unbind('click');
-		inServWCA.unbind('click').removeClass('click');
-		outServWCA.unbind('click').removeClass('click');
-		if (!wcaData['access_token']) {
-			wcaDataTd.html(EXPORT_LOGINWCA);
-			wcaDataTr.click(function() {
-				location.href = wcaLoginUrl;
-			}).addClass('click');
-		} else {
-			var me = wcaData['wca_me'];
-			wcaDataTd.html('WCAID: ' + me['wca_id'] + '<br>' + 'Name: ' + me['name']);
-			wcaDataTr.click(logoutFromWCA.bind(undefined, true)).addClass('click');
-			inServWCA.addClass('click').click(downloadData);
-			outServWCA.addClass('click').click(uploadDataClk);
-		}
 	}
 
 	function updateUserInfoFromGGL() {
@@ -443,14 +395,6 @@ var exportFunc = execMain(function() {
 			inServGGL.addClass('click').click(downloadDataGGL);
 			outServGGL.addClass('click').click(uploadDataGGL);
 		}
-	}
-
-	function logoutFromWCA(cfm) {
-		if (cfm && !confirm(EXPORT_LOGOUTCFM)) {
-			return;
-		}
-		delete localStorage['wcaData'];
-		kernel.pushSignal('export', ['account', 'wcaData']);
 	}
 
 	function logoutFromGGL(cfm) {
@@ -477,17 +421,9 @@ var exportFunc = execMain(function() {
 					localStorage['locData'] = JSON.stringify({ id: id, compid: getDataId('locData', 'compid') });
 					kernel.pushSignal('export', ['account', 'locData']);
 				}
-			} else if (value[1] == 'wca') {
-				if (!isValidId(getDataId('wcaData', 'cstimer_token'))) {
-					alert('Please Login with WCA Account in Export Panel First');
-					kernel.setProp('atexpa', 'n');
-					return;
-				}
 			}
 		} else if (signal == 'export') {
-			if (value[1] == 'wcaData') {
-				updateUserInfoFromWCA();
-			} else if (value[1] == 'gglData') {
+			if (value[1] == 'gglData') {
 				updateUserInfoFromGGL();
 			}
 		}
@@ -508,8 +444,8 @@ var exportFunc = execMain(function() {
 			return;
 		}
 		updateExpString().then(function() {
-			if (atexpa == 'id' || atexpa == 'wca') {
-				var id = atexpa == 'id' ? getDataId('locData', 'id') : getDataId('wcaData', 'cstimer_token');
+			if (atexpa == 'id') {
+				var id = getDataId('locData', 'id');
 				if (!isValidId(id)) {
 					logohint.push('Auto Export Abort');
 					kernel.setProp('atexpa', 'n');
@@ -554,17 +490,12 @@ var exportFunc = execMain(function() {
 		kernel.regListener('export', 'time', newTimePushed);
 		kernel.regListener('export', 'property', procSignal, /^atexpa$/);
 		kernel.regListener('export', 'export', procSignal, /^account$/);
-		kernel.regProp('kernel', 'atexpa', 1, PROPERTY_AUTOEXP, ['n', ['n', 'f', 'id', 'wca'], PROPERTY_AUTOEXP_OPT.split('|')]);
+		kernel.regProp('kernel', 'atexpa', 1, PROPERTY_AUTOEXP, ['n', ['n', 'f', 'id'], PROPERTY_AUTOEXP_OPT.split('|')]);
 		kernel.regProp('kernel', 'atexpi', ~1, 'Auto Export Interval (Solves)', [100, [50, 100, 200, 500], ['50', '100', '200', '500']]);
 		kernel.regProp('kernel', 'expp', 0, PROPERTY_IMPPREV, [false]);
 
 		kernel.addButton('export', BUTTON_EXPORT, showExportDiv, 2);
 		exportDiv.append('<br>',
-			// $('<div class="expOauth">').append(
-			// 	$('<table id="wcaLogin">').append(wcaDataTr),
-			// 	$('<table class="expUpDown">').append($('<tr>').append(
-			// 		$('<td>').append(inServWCA),
-			// 		$('<td>').append(outServWCA)))),
 			// $('<div class="expOauth">').append(
 			// 	$('<table id="gglLogin">').append(gglDataTr),
 			// 	$('<table class="expUpDown">').append($('<tr>').append(
@@ -583,30 +514,6 @@ var exportFunc = execMain(function() {
 			};
 			inFile.change(importFile.bind(inFile[0], reader));
 			inOtherFile.change(importFile.bind(inOtherFile[0], readerOther));
-		}
-
-		if ($.urlParam('code')) { //WCA oauth
-			wcaDataTd.html(EXPORT_LOGINAUTHED);
-			$.post('oauthwca.php', {
-				'code': $.urlParam('code')
-			}, function(val) {
-				if ('access_token' in val) {
-					localStorage['wcaData'] = JSON.stringify(val);
-					kernel.pushSignal('export', ['account', 'wcaData']);
-				} else {
-					alert(EXPORT_ERROR);
-					logoutFromWCA();
-				}
-			}, 'json').error(function() {
-				alert(EXPORT_ERROR);
-				logoutFromWCA();
-			}).always(function() {
-				updateUserInfoFromWCA();
-				$.clearUrl('code');
-			});
-			showExportDiv();
-		} else {
-			updateUserInfoFromWCA();
 		}
 
 		if ($.hashParam('access_token')) { //Google oauth
@@ -646,8 +553,6 @@ var exportFunc = execMain(function() {
 	return {
 		exportProperties: exportProperties,
 		isValidId: isValidId,
-		getDataId: getDataId,
-		logoutFromWCA: logoutFromWCA,
-		wcaLoginUrl: wcaLoginUrl
+		getDataId: getDataId
 	};
 });

@@ -449,7 +449,7 @@ var PROPERTY_STKHEAD = 'Use Stackmat Status Information';
 var PROPERTY_HIDEFULLSOL = 'Show solution progressively';
 var PROPERTY_IMPPREV = 'Import non-latest data';
 var PROPERTY_AUTOEXP = 'Auto Export (per 100 solves)';
-var PROPERTY_AUTOEXP_OPT = 'Never|To File|With csTimer ID|With WCA Account';
+var PROPERTY_AUTOEXP_OPT = 'Never|To File|With csTimer ID';
 var PROPERTY_SCRASIZE = 'Auto scramble size';
 var MODULE_NAMES = {
 	"kernel": 'global',
