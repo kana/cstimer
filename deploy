@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -euxo pipefail
+
+git diff --quiet HEAD
+rm -f htdocs
+git commit -am '%'
+git push origin HEAD:gh-pages -f
+git reset --hard HEAD~
