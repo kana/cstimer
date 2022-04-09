@@ -1,15 +1,8 @@
 "use strict";
 
 var exportFunc = execMain(function() {
-	var gglLoginUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=738060786798-octf9tngnn8ibd6kau587k34au263485.apps.googleusercontent.com&response_type=token&scope=https://www.googleapis.com/auth/drive.appdata&redirect_uri=' + encodeURI(location.href.split('?')[0]);
-
 	var exportDiv = $('<div />');
 	var exportTable = $('<table class="expOauth expUpDown">');
-
-	var gglDataTd = $('<td></td>');
-	var gglDataTr = $('<tr>').append('<td class="img"/>', gglDataTd);
-	var inServGGL = $('<a class="click"/>');
-	var outServGGL = $('<a class="click"/>');
 
 	var inFile = $('<input type="file" id="file"/>');
 	var inOtherFile = $('<input type="file" id="file"/>');
@@ -80,11 +73,9 @@ var exportFunc = execMain(function() {
 		}).then(function() {
 			if ('properties' in data) {
 				var devData = localStorage['devData'] || '{}';
-				var gglData = localStorage['gglData'] || '{}';
 				var locData = localStorage['locData'] || '{}';
 				localStorage.clear();
 				localStorage['devData'] = devData;
-				localStorage['gglData'] = gglData;
 				localStorage['locData'] = locData;
 				localStorage['properties'] = mathlib.obj2str(data['properties']);
 				kernel.loadProp();
@@ -209,106 +200,6 @@ var exportFunc = execMain(function() {
 		}
 	}
 
-	function downloadDataGGL() {
-		var gglToken = getDataId('gglData', 'access_token');
-		if (!gglToken) {
-			return;
-		}
-		inServGGL.html('Check File List...');
-		$.ajax('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&orderBy=modifiedTime desc&q=name%3D%27cstimer.txt%27', {
-			'type': 'GET',
-			'beforeSend': function(xhr) {
-				xhr.setRequestHeader("Authorization", "Bearer " + gglToken);
-			}
-		}).success(function(data, status, xhr) {
-			var files = data['files'];
-			if (files.length == 0) {
-				alert('No Data Found');
-				return updateUserInfoFromGGL();
-			}
-			var idx = 1;
-			if (kernel.getProp('expp')) {
-				idx = ~~prompt('You have %d file(s), load (1 - lastest one, 2 - lastest but one, etc) ?'.replace('%d', files.length), '1');
-				if (idx <= 0 || idx > files.length) {
-					return updateUserInfoFromGGL();
-				}
-			}
-			inServGGL.html('Import Data...');
-			var fileId = files[idx - 1]['id'];
-			$.ajax('https://www.googleapis.com/drive/v3/files/' + fileId + '?alt=media', {
-				'type': 'GET',
-				'beforeSend': function(xhr) {
-					xhr.setRequestHeader("Authorization", "Bearer " + gglToken);
-				}
-			}).success(function(data) {
-				try {
-					data = JSON.parse(LZString.decompressFromEncodedURIComponent(data));
-				} catch (e) {
-					alert('No Valid Data Found');
-					return updateUserInfoFromGGL();
-				}
-				updateUserInfoFromGGL();
-				loadData(data);
-			}).error(function() {
-				alert(EXPORT_ERROR + '\nPlease Re-login');
-				logoutFromGGL();
-			});
-
-			// removeRedundantGoogleFiles
-			for (var i = 10; i < files.length; i++) {
-				$.ajax('https://www.googleapis.com/drive/v3/files/' + files[i]['id'], {
-					'type': 'DELETE',
-					'beforeSend': function(xhr) {
-						xhr.setRequestHeader("Authorization", "Bearer " + gglToken);
-					}
-				});
-			}
-		}).error(function() {
-			alert(EXPORT_ERROR + '\nPlease Re-login');
-			logoutFromGGL();
-		});
-	}
-
-	function uploadDataGGL() {
-		var gglToken = getDataId('gglData', 'access_token');
-		if (!gglToken) {
-			return;
-		}
-		outServGGL.html('Create File...');
-		$.ajax('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
-			'type': 'POST',
-			'contentType': 'application/json',
-			'data': JSON.stringify({
-				'parents': ['appDataFolder'],
-				'name': 'cstimer.txt'
-			}),
-			'beforeSend': function(xhr) {
-				xhr.setRequestHeader("Authorization", "Bearer " + gglToken);
-			}
-		}).success(function(data, status, xhr) {
-			var uploadUrl = xhr.getResponseHeader('location');
-			outServGGL.html('Uploading Data...');
-			$.ajax(uploadUrl, {
-				'type': 'PUT',
-				'contentType': 'text/plain',
-				'data': LZString.compressToEncodedURIComponent(expString)
-			}).success(function(data, status, xhr) {
-				alert('Export Success');
-				updateUserInfoFromGGL();
-			}).error(function(data, status, xhr) {
-				alert(EXPORT_ERROR);
-				logoutFromGGL();
-			});
-		}).error(function(data, status, xhr) {
-			if (data.status == 401) {
-				alert('Timeout, Please Re-login');
-			} else {
-				alert(EXPORT_ERROR);
-			}
-			logoutFromGGL();
-		});
-	}
-
 	function showExportDiv() {
 		updateExpString().then(function() {
 			if (window.Blob) {
@@ -361,7 +252,6 @@ var exportFunc = execMain(function() {
 
 	function exportAccounts() {
 		var expOpt = {
-			'gglData': localStorage['gglData'],
 			'locData': localStorage['locData']
 		};
 		var newOpt = exportByPrompt(expOpt);
@@ -376,33 +266,6 @@ var exportFunc = execMain(function() {
 		}
 		location.reload();
 		return false;
-	}
-
-	function updateUserInfoFromGGL() {
-		var gglData = JSON.parse(localStorage['gglData'] || '{}');
-		gglDataTr.unbind('click');
-		inServGGL.unbind('click').removeClass('click').html(EXPORT_FROMSERV + ' (Google)');
-		outServGGL.unbind('click').removeClass('click').html(EXPORT_TOSERV + ' (Google)');
-		if (!gglData['access_token']) {
-			gglDataTd.html(EXPORT_LOGINGGL);
-			gglDataTr.click(function() {
-				location.href = gglLoginUrl;
-			}).addClass('click');
-		} else {
-			var me = gglData['ggl_me'];
-			gglDataTd.html('Name: ' + me['displayName'] + '<br>' + 'Email: ' + me['emailAddress']);
-			gglDataTr.click(logoutFromGGL.bind(undefined, true)).addClass('click');
-			inServGGL.addClass('click').click(downloadDataGGL);
-			outServGGL.addClass('click').click(uploadDataGGL);
-		}
-	}
-
-	function logoutFromGGL(cfm) {
-		if (cfm && !confirm(EXPORT_LOGOUTCFM)) {
-			return;
-		}
-		delete localStorage['gglData'];
-		kernel.pushSignal('export', ['account', 'gglData']);
 	}
 
 	function procSignal(signal, value) {
@@ -421,10 +284,6 @@ var exportFunc = execMain(function() {
 					localStorage['locData'] = JSON.stringify({ id: id, compid: getDataId('locData', 'compid') });
 					kernel.pushSignal('export', ['account', 'locData']);
 				}
-			}
-		} else if (signal == 'export') {
-			if (value[1] == 'gglData') {
-				updateUserInfoFromGGL();
 			}
 		}
 	}
@@ -496,11 +355,6 @@ var exportFunc = execMain(function() {
 
 		kernel.addButton('export', BUTTON_EXPORT, showExportDiv, 2);
 		exportDiv.append('<br>',
-			// $('<div class="expOauth">').append(
-			// 	$('<table id="gglLogin">').append(gglDataTr),
-			// 	$('<table class="expUpDown">').append($('<tr>').append(
-			// 		$('<td>').append(inServGGL),
-			// 		$('<td>').append(outServGGL)))),
 			exportTable);
 		if (window.FileReader && window.Blob) {
 			var reader = new FileReader();
@@ -514,39 +368,6 @@ var exportFunc = execMain(function() {
 			};
 			inFile.change(importFile.bind(inFile[0], reader));
 			inOtherFile.change(importFile.bind(inOtherFile[0], readerOther));
-		}
-
-		if ($.hashParam('access_token')) { //Google oauth
-			var access_token = $.hashParam('access_token');
-			gglDataTd.html(EXPORT_LOGINAUTHED);
-			$.get('https://www.googleapis.com/drive/v3/about', {
-				'fields': 'user',
-				'access_token': access_token
-			}, function(val) {
-				if ('user' in val) {
-					localStorage['gglData'] = JSON.stringify({
-						'access_token': access_token,
-						'ggl_me': val['user']
-					});
-					kernel.pushSignal('export', ['account', 'gglData']);
-				} else {
-					alert(EXPORT_ERROR);
-					logoutFromGGL();
-				}
-			}, 'json').error(function(data, status, xhr) {
-				if (data.status == 401) {
-					alert('Timeout, Please Re-login');
-				} else {
-					alert(EXPORT_ERROR);
-				}
-				logoutFromGGL();
-			}).always(function() {
-				updateUserInfoFromGGL();
-				$.clearHash();
-			});
-			showExportDiv();
-		} else {
-			updateUserInfoFromGGL();
 		}
 	});
 

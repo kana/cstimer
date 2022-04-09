@@ -1172,7 +1172,7 @@ var kernel = execMain(function() {
 	});
 
 	function cleanLocalStorage() {
-		var validKeys = ['properties', 'cachedScr', 'devData', 'wcaData', 'gglData', 'locData'];
+		var validKeys = ['properties', 'cachedScr', 'devData', 'locData'];
 
 		for (var i = 0; i < validKeys.length; i++) {
 			try {
