@@ -155,7 +155,6 @@ var scrdata = [
 	]],
 	['Input', [
 		['Extern', "input", 0],
-		['Remote', "remoteOther", 0]
 	]],
 	['===WCA===', [
 		['--', "blank", 0]

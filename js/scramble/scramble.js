@@ -310,10 +310,8 @@ var scramble = execMain(function(rn, rndEl) {
 		}
 
 		if (realType.startsWith('remote')) {
-			scramble = remoteScrambleGen.next(realType);
+			scramble = "";
 			return;
-		} else {
-			remoteScrambleGen.clear();
 		}
 
 		if (realType in scramblers) {
@@ -338,62 +336,6 @@ var scramble = execMain(function(rn, rndEl) {
 		sdiv.html(scrStd(type, scramble, len, true));
 		kernel.pushSignal('scramble', scrStd(type, scramble, len));
 	}
-
-	var remoteScrambleGen = (function() {
-		var remoteScramble = [];
-		var remoteURL = 'https://cstimer.net/testRemoteScramble.php';
-
-		function next(type) {
-			var ret = null;
-			while (!ret && remoteScramble.length != 0) {
-				ret = remoteScramble.shift();
-			}
-			if (ret) {
-				return ret;
-			}
-			if (type == 'remoteComp') {
-				if (!onlinecomp) {
-					remoteFail();
-				}
-				ret = onlinecomp.getScrambles();
-				if (!parseInput(ret)) {
-					remoteFail();
-				} else {
-					requestAnimFrame(doScrambleIt);
-				}
-			} else if (type == 'remoteURL') {
-				$.getJSON(remoteURL, function(ret) {
-					if (!parseInput(ret)) {
-						remoteFail();
-					} else {
-						requestAnimFrame(doScrambleIt);
-					}
-				}).error(remoteFail);
-			}
-			return "";
-		}
-
-		function remoteFail() {
-			kernel.setProp('scrType', typeExIn);
-		}
-
-		function clear() {
-			remoteScramble = [];
-		}
-
-		function parseInput(ret) {
-			if (!$.isArray(ret)) {
-				return false;
-			}
-			remoteScramble = ret;
-			return remoteScramble.length != 0;
-		}
-
-		return {
-			next: next,
-			clear: clear
-		};
-	})();
 
 	var inputScrambleGen = (function() {
 
