@@ -184,29 +184,34 @@ textarea {
 	border-radius: 5px;
 	border-radius: 0.35rem;
 	width: 13.5rem;
-	height: 4.5rem;
+	height: 9.0rem;
 }
 
 #leftbar > div {
 	position: absolute;
 	width: 33.3333%;
-	height: 100%;
+	height: 50%;
 	cursor: pointer;
 	border-radius: 5px;
 	border-radius: 0.35rem;
 	font-family: Impact;
 }
 
-#leftbar > div.c1{
+#leftbar > #logo{
 	top: 0;
+	left: 0;
+	width: 100%;
+}
+#leftbar > div.c1{
+	bottom: 0;
 	left: 0;
 }
 #leftbar > div.c2{
-	top: 0;
+	bottom: 0;
 	left: 33.3333%;
 }
 #leftbar > div.c6{
-	top: 0;
+	bottom: 0;
 	right: 0;
 }
 
@@ -515,7 +520,7 @@ html:not(.m) .mywindow:hover, html:not(.m) #leftbar:hover {
 
 #stats {
 	left: 0;
-	top: 4.5rem;
+	top: 9.0rem;
 	bottom: 0;
 	text-align: center;
 }
