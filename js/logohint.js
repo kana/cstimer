@@ -17,8 +17,6 @@ var logohint = execMain(function() {
 
 	function render() {
 		if (isMouseIn) {
-			logocc.removeClass('hint');
-			logocc.html('ABOUT');
 			curMsg = undefined;
 			return;
 		}
