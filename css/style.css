@@ -201,6 +201,7 @@ textarea {
 	top: 0;
 	left: 0;
 	width: 100%;
+	cursor: auto;
 }
 #leftbar > div.c1{
 	bottom: 0;
