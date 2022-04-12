@@ -3,7 +3,9 @@
 set -euxo pipefail
 
 git diff --quiet HEAD
+commit_id="$(git rev-parse HEAD)"
 rm -f htdocs
+sed -i -e "s/__VERSION__/$commit_id/" index.html
 git commit -am '%'
 git push origin HEAD:gh-pages -f
 git reset --hard HEAD~
