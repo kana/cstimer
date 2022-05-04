@@ -425,7 +425,7 @@ var timer = execMain(function(regListener, regProp, getProp, pretty, ui, pushSig
 	})();
 
 	var inputTimer = (function() {
-		var input = $('<textarea id="inputTimer" rows="1" />');
+		var input = $('<textarea id="inputTimer" rows="1" inputmode="numeric" />');
 		var lastEmptyTrigger = 0;
 
 		function parseInput() {
