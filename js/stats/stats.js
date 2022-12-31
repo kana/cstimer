@@ -1421,16 +1421,16 @@ var stats = execMain(function(kpretty, round, kpround) {
 				return baseName;
 			}
 
-			var match = /^(\d+)\.(\d+)$/.exec(tokens[0]);
+			var match = /^\d{6}$/.exec(tokens[0]);
 			if (!match) {
 				return baseName;
 			}
 
 			var now = new Date();
 			return [
-				(now.getMonth() + 1)
-				+ '.'
-				+ now.getDate()
+				now.getFullYear().toString().slice(-2)
+				+ (now.getMonth() + 1).toString().padStart(2, '0')
+				+ now.getDate().toString().padStart(2, '0')
 			].concat(tokens.slice(1)).join(' ');
 		}
 
